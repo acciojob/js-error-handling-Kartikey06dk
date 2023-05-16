@@ -48,12 +48,3 @@ function evalString(expression) {
   return result;
 }
 
-// Testing the evalString function
-/*try {
-  const expression = "10 + 5 - 2 * 3 / 4";
-  const result = evalString(expression);
-  console.log("Result:", result);
-} catch (error) {
-  console.error("Error:", error.message);
-}
-*/
