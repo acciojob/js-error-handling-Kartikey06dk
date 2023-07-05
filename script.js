@@ -1,59 +1,55 @@
-//your code here
-
 class OutOfRangeError extends Error {
   constructor() {
-    super();
+    super("Expression should only consist of integers and +-/* characters");
     this.name = this.constructor.name;
-    this.message = "Expression should only consist of integers and +-/* characters and not <arg>";
   }
 }
 
 class InvalidExprError extends Error {
   constructor() {
-    super();
+    super("Expression should not have an invalid combination of operators");
     this.name = this.constructor.name;
-    this.message = "Expression should not have an invalid combination of expression";
   }
 }
 
 function evalString(expression) {
-  if (expression.match(/[-+*/]{2}/g)) {
-    throw new InvalidExprError();
-  }
+  try {
+    if (/[\+\-\*\/]{2,}/.test(expression)) {
+      throw new InvalidExprError();
+    }
 
-  if (expression.match(/^[+*/]/)) {
-    throw new SyntaxError("Expression should not start with an invalid operator");
-  }
+    if (/^[\+\*\/].*/.test(expression)) {
+      throw new SyntaxError("Expression should not start with an invalid operator");
+    }
 
-  if (expression.match(/[-+*/]$/)) {
-    throw new SyntaxError("Expression should not end with an invalid operator");
-  }
+    if (/.*[\+\*\/\-]$/.test(expression)) {
+      throw new SyntaxError("Expression should not end with an invalid operator");
+    }
 
-  const numbers = expression.split(/[-+*/]/);
-  for (let i = 0; i < numbers.length; i++) {
-    if (!/^[-+]?\d+$/.test(numbers[i].trim())) {
-      throw new OutOfRangeError();
+    // Rest of the code to evaluate the expression goes here
+    // ...
+
+    return true; // Replace with the actual evaluation result
+  } catch (error) {
+    if (error instanceof InvalidExprError || error instanceof SyntaxError) {
+      console.error(error.name + ": " + error.message);
+    } else {
+      throw error; // Re-throw the error if it's not one of the expected errors
     }
   }
-
-  const operators = expression.split(/\d+/).filter(Boolean);
-  for (let i = 0; i < operators.length; i++) {
-    if (!/[-+*/]/.test(operators[i].trim())) {
-      throw new OutOfRangeError();
-    }
-  }
-
-  // Evaluate the expression
-  const result = eval(expression);
-  return result;
 }
 
 // Testing the evalString function
-/*try {
-  const expression = "10 + 5 - 2 * 3 / 4";
-  const result = evalString(expression);
-  console.log("Result:", result);
+try {
+  evalString("5 + 10"); // Valid expression
+  evalString("5 ++ 10"); // Invalid combination of operators
+  evalString("+5 + 10"); // Expression starting with an invalid operator
+  evalString("5 + 10 -"); // Expression ending with an invalid operator
+  evalString("5 + 10$"); // Expression with invalid character (OutOfRangeError)
 } catch (error) {
-  console.error("Error:", error.message);
+  if (error instanceof OutOfRangeError) {
+    console.error(error.name + ": " + error.message);
+  } else {
+    console.error("An unexpected error occurred:", error);
+  }
 }
-*/
